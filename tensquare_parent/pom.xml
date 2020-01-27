@@ -17,19 +17,36 @@
         <version>2.0.1.RELEASE</version>
         <relativePath/>
     </parent>
+
     <modules>
         <module>../tensquare_recruit</module>
         <module>../tensquare_base</module>
         <module>../tensquare_common</module>
+        <module>../tensquare_user</module>
+        <module>../tensquare_article</module>
+        <module>../tensquare_spit</module>
+        <module>../tensquare_search</module>
+        <module>../tensquare_qa</module>
     </modules>
 
 
     <properties>
         <commons-lang3.version>3.6</commons-lang3.version>
+        <!-- SpringCloud -->
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
     </properties>
 
 
     <dependencies>
+        <!-- SpringCloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

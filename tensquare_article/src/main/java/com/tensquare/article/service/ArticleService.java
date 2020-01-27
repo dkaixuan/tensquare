@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,6 +34,9 @@ public class ArticleService {
 	
 	@Autowired
 	private IdWorker idWorker;
+
+	@Autowired
+	private RedisTemplate redisTemplate;
 
 
 	/**
@@ -154,4 +158,31 @@ public class ArticleService {
 
 	}
 
+	public Article findById(String id) {
+		Article article = (Article) redisTemplate.opsForValue().get("article:" + id + ":id");
+		if (article == null) {
+			article = articleDao.findById(id).get();
+			redisTemplate.opsForValue().set("article:" + id + ":id", article, 60 * 60 * 24, TimeUnit.SECONDS);
+			return article;
+		}
+		return article;
+	}
+
+	public void add(Article article) {
+		String id = article.getId();
+		redisTemplate.delete("article:" + id + ":id");
+		article.setId(idWorker.nextId()+"");
+		articleDao.save(article);
+	}
+
+	public void update(Article article) {
+		String id = article.getId();
+		redisTemplate.delete("article:" + id + ":id");
+		articleDao.save(article);
+	}
+
+	public void deleteById(String id) {
+		redisTemplate.delete("article:" + id + ":id");
+		articleDao.deleteById(id);
+	}
 }

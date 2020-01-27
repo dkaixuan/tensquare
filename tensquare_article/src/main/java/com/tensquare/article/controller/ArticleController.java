@@ -78,7 +78,50 @@ public class ArticleController {
     public Result findSearch( @RequestBody Map searchMap){
         return new Result(true,StatusCode.OK,"查询成功",articleService.findSearch(searchMap));
     }
-	
+
+	/**
+	 * 根据ID查询
+	 * @param id ID
+	 * @return
+	 */
+	@RequestMapping(value="/{id}",method= RequestMethod.GET)
+	public Result findById(@PathVariable String id){
+		return new Result(true,StatusCode.OK,"查询成功",articleService.findById(id));
+	}
+
+
+
+	/**
+	 * 增加
+	 * @param article
+	 */
+	@RequestMapping(method=RequestMethod.POST)
+	public Result add(@RequestBody Article article  ){
+		articleService.add(article);
+		return new Result(true,StatusCode.OK,"增加成功");
+	}
+
+	/**
+	 * 修改
+	 * @param article
+	 */
+	@RequestMapping(value="/{id}",method= RequestMethod.PUT)
+	public Result update(@RequestBody Article article, @PathVariable String id ){
+		article.setId(id);
+		articleService.update(article);
+		return new Result(true,StatusCode.OK,"修改成功");
+	}
+
+	/**
+	 * 删除
+	 * @param id
+	 */
+	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
+	public Result delete(@PathVariable String id ){
+		articleService.deleteById(id);
+		return new Result(true,StatusCode.OK,"删除成功");
+	}
+
 
 	
 }
