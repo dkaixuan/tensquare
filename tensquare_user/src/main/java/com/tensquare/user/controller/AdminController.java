@@ -6,9 +6,12 @@ import com.tensquare.common.entity.StatusCode;
 import com.tensquare.common.util.JwtUtil;
 import com.tensquare.user.pojo.Admin;
 import com.tensquare.user.service.AdminService;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -26,6 +29,27 @@ public class AdminController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
+
+	@PostMapping("/login")
+	public Result login(@RequestBody Admin admin) {
+	 	Admin adminFromDb=adminService.login(admin);
+		if (adminFromDb != null) {
+			String id = adminFromDb.getId();
+			String adminName = adminFromDb.getLoginname();
+			String token = jwtUtil.createJWT(id, adminName, "admin");
+			Map<String, Object> map = new HashMap<>();
+			map.put("token", token);
+
+			map.put("role", "admin");
+			return new Result(true, StatusCode.OK, "登陆成功",map);
+		}else {
+			return new Result(false, StatusCode.LOGINERROR, "用户名或密码错误");
+		}
+
+
+
+
+	}
 
 
 	/**
@@ -71,7 +95,15 @@ public class AdminController {
         return new Result(true,StatusCode.OK,"查询成功",adminService.findSearch(searchMap));
     }
 	
-
+	/**
+	 * 增加
+	 * @param admin
+	 */
+	@RequestMapping(method=RequestMethod.POST)
+	public Result add(@RequestBody Admin admin  ){
+		adminService.add(admin);
+		return new Result(true,StatusCode.OK,"增加成功");
+	}
 	
 	/**
 	 * 修改
@@ -89,7 +121,12 @@ public class AdminController {
 	 * @param id
 	 */
 	@RequestMapping(value="/{id}",method= RequestMethod.DELETE)
-	public Result delete(@PathVariable String id ){
+	public Result delete(@PathVariable String id, HttpServletRequest request){
+		Claims claims = (Claims) request.getAttribute("admin_claims");
+		if (claims == null) {
+			return new Result(true,StatusCode.ACCESSERROR,"无权访问");
+		}
+
 		adminService.deleteById(id);
 		return new Result(true,StatusCode.OK,"删除成功");
 	}

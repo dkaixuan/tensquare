@@ -4,6 +4,7 @@ import com.tensquare.common.entity.PageResult;
 import com.tensquare.common.entity.Result;
 import com.tensquare.common.entity.StatusCode;
 import com.tensquare.common.util.JwtUtil;
+import com.tensquare.user.pojo.Admin;
 import com.tensquare.user.pojo.User;
 import com.tensquare.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 /**
  * 控制器层
@@ -30,6 +32,23 @@ public class UserController {
 
 	@Autowired
 	private HttpServletRequest request;
+
+
+	@PostMapping("/login")
+	public Result login(@RequestBody User user) {
+		User userFromDb=userService.login(user);
+		if (userFromDb != null) {
+			String token = jwtUtil.createJWT(user.getId(),user.getNickname(),"user");
+			Map<String, Object> map = new HashMap<>();
+			map.put("token", token);
+			map.put("name", user.getNickname());
+			map.put("avatar", user.getAvatar());
+			return new Result(true, StatusCode.OK, "登陆成功");
+		}else {
+			return new Result(false, StatusCode.LOGINERROR, "用户名或密码错误");
+		}
+	}
+
 
 
 	/**

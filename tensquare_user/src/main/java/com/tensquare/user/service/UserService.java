@@ -1,5 +1,6 @@
 package com.tensquare.user.service;
 
+import com.alibaba.fastjson.JSON;
 import com.tensquare.common.constants.ResultCodeEnum;
 import com.tensquare.common.exception.TensquareException;
 import com.tensquare.common.util.IdWorker;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -42,6 +44,9 @@ public class UserService {
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
+	@Autowired
+	private BCryptPasswordEncoder encoder;
+
 
 	//更新关注数
 	@Transactional
@@ -67,6 +72,7 @@ public class UserService {
 		}
 
 		user.setId(idWorker.nextId()+"");
+		user.setPassword(encoder.encode(user.getPassword()));
 		user.setFollowcount(0);//关注数
 		user.setFanscount(0);//粉丝数
 		user.setOnline(0L);//在线时长
@@ -212,4 +218,17 @@ public class UserService {
 
 	}
 
+	public User login(User user) {
+		User userFromCache = (User) redisTemplate.opsForValue().get("user:" + user.getPassword() + user.getMobile() + ":info");
+		if (userFromCache != null) {
+			return userFromCache;
+		}else {
+			User userFromDb = userDao.findByMobile(user.getMobile());
+			if (userFromDb != null && encoder.matches(user.getPassword(), userFromDb.getPassword())) {
+				redisTemplate.opsForValue().set("user:" + user.getPassword() + user.getMobile() + ":info", JSON.toJSONString(userFromDb), 10, TimeUnit.MINUTES);
+				return userFromDb;
+			}
+		}
+		return null;
+	}
 }

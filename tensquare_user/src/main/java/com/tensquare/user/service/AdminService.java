@@ -1,5 +1,6 @@
 package com.tensquare.user.service;
 
+import com.alibaba.fastjson.JSON;
 import com.tensquare.common.util.IdWorker;
 import com.tensquare.user.dao.AdminDao;
 import com.tensquare.user.pojo.Admin;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,6 +34,12 @@ public class AdminService {
 	
 	@Autowired
 	private IdWorker idWorker;
+
+	@Autowired
+	private BCryptPasswordEncoder encoder;
+
+	@Autowired
+	private RedisTemplate redisTemplate;
 
 
 
@@ -131,4 +140,23 @@ public class AdminService {
 
 	}
 
+	public void add(Admin admin) {
+		admin.setId(idWorker.nextId()+"");
+		admin.setPassword(encoder.encode(admin.getPassword()));
+		adminDao.save(admin);
+	}
+
+	public Admin login(Admin admin) {
+		Admin adminFromCache = (Admin) redisTemplate.opsForValue().get("admin:" + admin.getLoginname()+admin.getPassword() + ":info");
+		if (adminFromCache != null) {
+			return adminFromCache;
+		}else {
+			Admin adminFromDb = adminDao.findByLoginname(admin.getLoginname());
+			if (adminFromDb != null && encoder.matches(admin.getPassword(), adminFromDb.getPassword())) {
+				redisTemplate.opsForValue().set("admin:" + admin.getLoginname()+admin.getPassword() + ":info", JSON.toJSONString(admin));
+				return adminFromDb;
+			}
+		}
+		return null;
+	}
 }
