@@ -37,15 +37,20 @@
     </properties>
 
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.M9</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
     <dependencies>
-        <!-- SpringCloud -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>${spring-cloud.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>

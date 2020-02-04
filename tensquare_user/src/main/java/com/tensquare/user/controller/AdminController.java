@@ -37,7 +37,7 @@ public class AdminController {
 			String id = adminFromDb.getId();
 			String adminName = adminFromDb.getLoginname();
 			String token = jwtUtil.createJWT(id, adminName, "admin");
-			Map<String, Object> map = new HashMap<>();
+			Map<String, Object> map = new HashMap<>(16);
 			map.put("token", token);
 
 			map.put("role", "admin");

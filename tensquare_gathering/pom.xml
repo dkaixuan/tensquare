@@ -12,6 +12,12 @@
 
     <artifactId>tensquare_gathering</artifactId>
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
         <!--开发者工具-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

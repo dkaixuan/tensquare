@@ -34,6 +34,17 @@ public class UserController {
 	private HttpServletRequest request;
 
 
+	/**
+	 * 更新好友粉丝数和用户关注数
+	 */
+	@PutMapping("/{userid}/{friendid}/{x}")
+	public void updateFanscountAndFollowcount(@PathVariable String userid,
+											  @PathVariable String friendid,
+											  @PathVariable int x) {
+		userService.updateFanscountAndFollowcount(x,userid,friendid);
+	}
+
+
 	@PostMapping("/login")
 	public Result login(@RequestBody User user) {
 		User userFromDb=userService.login(user);

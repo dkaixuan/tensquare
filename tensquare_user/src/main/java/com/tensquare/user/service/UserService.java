@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 @Service
+@Transactional(rollbackFor=Exception.class)
 public class UserService {
 
 	@Autowired
@@ -46,20 +47,6 @@ public class UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
-
-
-	//更新关注数
-	@Transactional
-	public void incFollowcount(String userid,int x){
-		userDao.incFollowcount(userid,x);
-	}
-
-	//更新粉丝数
-	@Transactional
-	public void incFanscount(String userid,int x){
-		userDao.incFanscount(userid,x);
-	}
-
 
 	/**
 	 * 用户注册
@@ -231,4 +218,13 @@ public class UserService {
 		}
 		return null;
 	}
+
+
+
+    public void updateFanscountAndFollowcount(int x, String userid, String friendid) {
+		//更新好友粉丝数
+		userDao.updateFriendFanscount(x, friendid);
+		//更新用户关注数
+		userDao.updateUserFollowcount(x, userid);
+    }
 }

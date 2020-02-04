@@ -11,8 +11,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tensquare_spit</artifactId>
-    <!--开发者工具-->
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!--开发者工具-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

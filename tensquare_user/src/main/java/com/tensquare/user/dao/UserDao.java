@@ -33,4 +33,17 @@ public interface UserDao extends JpaRepository<User,String>,JpaSpecificationExec
 
     //查询用户
     public User findByMobile(String mobile);
+
+
+    /**
+     * 更新好友粉丝数
+     * @param x
+     * @param friendid
+     */
+    @Modifying
+    @Query(value ="update tb_user set fanscount=fanscount+? where id=?",nativeQuery =true)
+    void updateFriendFanscount(int x, String friendid);
+
+    @Query(value ="update tb_user set followcount=followcount+? where id=?",nativeQuery = true)
+    void updateUserFollowcount(int x, String userid);
 }

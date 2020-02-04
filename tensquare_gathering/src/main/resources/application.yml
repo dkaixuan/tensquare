@@ -2,7 +2,7 @@ server:
   port: 9005
 spring:
   application:
-    name: tensquare_gathering
+    name: tensquare-gathering
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/tensquare_gathering?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
