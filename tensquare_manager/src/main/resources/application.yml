@@ -35,5 +35,7 @@ zuul:
     tensquare‐user: #用户
       path: /user/** #配置请求URL的请求规则
       serviceId: tensquare‐user #指定Eureka注册中心中的服务id
-
-
+jwt:
+  config:
+    key : tensquare2020
+    ttl : 3600000

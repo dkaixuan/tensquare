@@ -18,7 +18,20 @@ spring:
     host: 192.168.2.107
 
 
+
 tensquare:
   short:
     message:
       appcode: 4b9bd8ceed794cc58c56fe841329458c
+
+jwt:
+  config:
+    key : tensquare2020
+    ttl : 3600000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:6868/eureka
+  instance:
+    ip-address: true

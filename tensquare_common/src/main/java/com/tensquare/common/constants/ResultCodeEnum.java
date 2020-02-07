@@ -13,6 +13,7 @@ public enum ResultCodeEnum {
     MESSAGE_RANDOM_CODE_LENGTH_INVALID(20000, true, "验证码长度不合法"),
     SMS_CODE_INVALID(20001, false, "请输入正确的验证码"),
     SMS_CODE_INTERFACE_ERROR(20001, false, "短信接口异常"),
+    FORWARD_ERROR(20001, false, "转发一场"),
     UNKNOWN_REASON(20001,false,"未知错误");
 
     private Integer code;
